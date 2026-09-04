@@ -1,87 +1,106 @@
-# LLM Agent Learning
+# LLM Agent Learning System
 
-一个基于 DeepSeek API 的简单 Agent 学习项目。
+A simple Agent learning project built with DeepSeek API and OpenAI SDK.
 
-通过 OpenAI SDK 调用 DeepSeek 大模型，实现 Function Calling（工具调用），让大模型根据用户需求选择并调用 Python 工具。
-
----
-
-## 项目介绍
-
-本项目用于学习大语言模型（LLM）Agent 的基本工作流程。
-
-实现流程：
-
-用户输入问题：
-
-```
-北京天气怎么样？
-```
-
-↓
-
-大模型理解用户意图
-
-↓
-
-选择工具：
-
-```
-get_weather()
-```
-
-↓
-
-Python 执行工具函数
-
-↓
-
-返回工具结果
-
-↓
-
-大模型生成最终回答
+This project demonstrates how Large Language Models (LLMs) can use **Function Calling** to select and execute Python tools based on user requests.
 
 ---
 
-## 技术栈
+## Overview
+
+This project is created for learning the basic workflow of LLM Agents.
+
+The system allows an LLM to:
+
+1. Understand user requests
+2. Decide whether a tool is needed
+3. Generate tool call arguments
+4. Execute Python functions
+5. Use tool results to generate final responses
+
+Example workflow:
+
+```
+User
+ |
+ v
+LLM (DeepSeek)
+ |
+ | Tool Calling
+ v
+Python Tool
+ |
+ | Return Result
+ v
+LLM
+ |
+ v
+Final Answer
+```
+
+---
+
+## Features
+
+- DeepSeek API integration
+- OpenAI Python SDK usage
+- Function Calling implementation
+- Custom Python tools
+- Environment variable management
+- Basic Agent workflow
+
+---
+
+## Tech Stack
 
 - Python 3.12
 - DeepSeek API
-- OpenAI Python SDK
+- OpenAI SDK
 - python-dotenv
 - Function Calling
-- LLM Agent
+- LLM Agent Architecture
 
 ---
 
-## 项目结构
+## Project Structure
 
 ```
 llm-agent-learning
 │
 ├── 111
-│   ├── main.py        # Agent主程序
-│   └── tools.py       # 工具函数
+│   ├── main.py          # Main Agent program
+│   └── tools.py         # Custom tools
 │
-├── .env               # API Key配置
-│
-├── requirements.txt   # 项目依赖
-│
+├── .env                 # API key configuration
+├── requirements.txt     # Dependencies
 └── README.md
 ```
 
 ---
 
-## 环境配置
+## Installation
 
-### 1. 创建虚拟环境
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-name/llm-agent-learning.git
+```
+
+Enter the project directory:
+
+```bash
+cd llm-agent-learning
+```
+
+---
+
+### 2. Create virtual environment
 
 ```bash
 python -m venv venv
 ```
 
-激活：
+Activate the environment:
 
 Windows:
 
@@ -91,33 +110,33 @@ venv\Scripts\activate
 
 ---
 
-### 2. 安装依赖
+### 3. Install dependencies
 
 ```bash
-pip install openai python-dotenv
+pip install -r requirements.txt
 ```
 
 ---
 
-### 3. 配置 API Key
+## Environment Configuration
 
-创建 `.env` 文件：
+Create a `.env` file:
 
 ```env
-DEEPSEEK_API_KEY=你的API_KEY
+DEEPSEEK_API_KEY=your_api_key_here
 ```
 
 ---
 
-## 运行项目
+## Running the Project
 
-进入项目目录：
+Navigate to the project folder:
 
 ```bash
 cd 111
 ```
 
-运行：
+Run:
 
 ```bash
 python main.py
@@ -125,88 +144,96 @@ python main.py
 
 ---
 
-## Agent 工作流程
+## Example
+
+User input:
 
 ```
-             用户
-              |
-              ↓
-        DeepSeek LLM
-              |
-       判断是否需要工具
-              |
-              ↓
-       Tool Calling
-              |
-              ↓
-        Python函数
-              |
-              ↓
-        返回结果
-              |
-              ↓
-        LLM生成回答
+How is the weather in Beijing?
 ```
 
----
-
-## 示例
-
-用户：
-
-```
-北京天气怎么样？
-```
-
-模型生成工具调用：
+The LLM generates a tool call:
 
 ```json
 {
-    "name": "get_weather",
-    "arguments": {
-        "city": "北京"
-    }
+  "name": "get_weather",
+  "arguments": {
+    "city": "Beijing"
+  }
 }
 ```
 
-Python执行：
+Python executes:
 
 ```python
-get_weather("北京")
+get_weather("Beijing")
 ```
 
-返回：
+Tool returns:
 
 ```
-晴天，25度
+Sunny, 25°C
 ```
 
-模型最终生成：
+The LLM then generates the final response:
 
 ```
-北京今天晴天，25度。
-天气比较舒适，适合户外活动。
+The weather in Beijing is sunny with a temperature of 25°C.
+It is a good day for outdoor activities.
 ```
 
 ---
 
-## 学习目标
+## How It Works
 
-通过本项目学习：
+The Agent workflow:
 
-- 如何调用大语言模型 API
-- 如何使用环境变量保存 API Key
-- 如何使用 Function Calling
-- 如何设计 AI Tool
-- 理解 Agent 基本工作机制
+```
+          User
+           |
+           v
+    DeepSeek LLM
+           |
+   Understand Intent
+           |
+           v
+    Select Tool
+           |
+           v
+  Execute Python Function
+           |
+           v
+    Tool Result
+           |
+           v
+ Generate Final Response
+```
 
 ---
 
-## 后续计划
+## Learning Goals
 
-- [ ] 增加更多工具
-- [ ] 实现自动 Tool Router
-- [ ] 支持多轮对话
-- [ ] 加入记忆功能
-- [ ] 使用 LangChain 构建 Agent
-- [ ] 开发实际 AI 应用
+Through this project, I learned:
+
+- How to call LLM APIs
+- How Function Calling works
+- How LLMs select tools
+- How to build a simple Agent system
+- How LLMs interact with external tools
+
+---
+
+## Future Improvements
+
+- [ ] Add more tools
+- [ ] Implement automatic tool routing
+- [ ] Support multi-turn conversations
+- [ ] Add memory system
+- [ ] Build more advanced Agents
+- [ ] Integrate LangChain / LangGraph
+
+---
+
+## License
+
+MIT License
