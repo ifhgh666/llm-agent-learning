@@ -36,7 +36,7 @@
 
 ---
 
-##Agent 工作流程
+## Agent 工作流程
 
 ```text
 用户
@@ -72,7 +72,7 @@ DeepSeek 大模型
 继续执行工具                 输出最终答案
  |
  +---------- Agent Loop ----------+
-##当前功能
+## 当前功能
 DeepSeek API 接入
 OpenAI Python SDK 调用
 Function Calling
@@ -86,7 +86,7 @@ Agent Loop
 环境变量管理
 基础异常处理
 命令行交互输入
-##当前工具
+## 当前工具
 
 当前 Agent 中包含以下测试工具：
 
@@ -112,7 +112,7 @@ loop_test
 
 这些工具目前主要用于学习和测试 Agent 的运行机制。
 
-##技术栈
+## 技术栈
 Python 3.12
 DeepSeek API
 OpenAI Python SDK
@@ -121,7 +121,7 @@ JSON
 Function Calling
 Tool Registry
 Agent Loop
-##项目结构
+## 项目结构
 llm-agent-learning
 │
 ├── 111
@@ -141,7 +141,7 @@ llm-agent-learning
 │   └── Python 依赖
 │
 └── README.md
-##核心文件说明
+## 核心文件说明
 main.py
 
 主要负责：
@@ -209,7 +209,7 @@ result = tool_function(**args)
 
 这样代码更加简洁，也更容易扩展。
 
-##安装
+## 安装
 1. 克隆仓库
 git clone https://github.com/ifhgh666/llm-agent-learning.git
 
@@ -259,7 +259,7 @@ python main.py
 
 然后输入问题即可。
 
-##示例 1：简单工具调用
+## 示例 1：简单工具调用
 
 输入：
 
@@ -288,7 +288,7 @@ BMI指数是29.39
 
 最终由大模型生成自然语言回答。
 
-##示例 2：多步骤 Agent 任务
+## 示例 2：多步骤 Agent 任务
 
 输入：
 
@@ -608,7 +608,7 @@ Tool Result 写回消息历史
  学习 MCP
  构建更加复杂的 Agent
  增加 Web 界面
-##学习路线
+## 学习路线
 
 当前进度：
 
