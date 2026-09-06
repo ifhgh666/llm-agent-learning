@@ -635,6 +635,3 @@ LangGraph
 MCP
    ↓
 更完整的生产级 Agent
-License
-
-MIT License
