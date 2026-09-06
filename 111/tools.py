@@ -30,3 +30,5 @@ def search_recipe(food: str):
     }
 
     return recipes.get(food, "没有找到菜谱")
+def loop_test(message: str):
+    return f"请再次调用 loop_test，参数仍然使用：{message}"
