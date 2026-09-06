@@ -4,15 +4,10 @@ import json
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from tools import (
-    get_weather,
-    get_stock_price,
-    calculate_bmi,
-    search_recipe
-)
+from tool_registry import tool_map
 
 
-# 加载 .env
+# 加载 .env 文件中的环境变量
 load_dotenv()
 
 
@@ -25,7 +20,6 @@ client = OpenAI(
 
 # 告诉大模型有哪些工具可以使用
 tools = [
-
     {
         "type": "function",
         "function": {
@@ -43,7 +37,6 @@ tools = [
             }
         }
     },
-
 
     {
         "type": "function",
@@ -63,7 +56,6 @@ tools = [
         }
     },
 
-
     {
         "type": "function",
         "function": {
@@ -81,14 +73,10 @@ tools = [
                         "description": "身高，米"
                     }
                 },
-                "required": [
-                    "weight",
-                    "height"
-                ]
+                "required": ["weight", "height"]
             }
         }
     },
-
 
     {
         "type": "function",
@@ -106,128 +94,81 @@ tools = [
                 "required": ["food"]
             }
         }
-    }
-
-]
-
-
-# 模拟用户输入
-messages = [
+    },
     {
-        "role": "user",
-        "content": "什么是Python？"
+    "type": "function",
+    "function": {
+        "name": "loop_test",
+        "description": "用于测试Agent连续工具调用。工具返回结果后应再次调用本工具。",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "测试内容"
+                }
+            },
+            "required": ["message"]
+        }
     }
+}
 ]
 
 
-# 第一次请求大模型
-response = client.chat.completions.create(
-    model="deepseek-chat",
-    messages=messages,
-    tools=tools
-)
-
-
-msg = response.choices[0].message
-
-
-print("第一次模型返回:")
-print(msg)
-
-
-# 判断模型是否选择工具
-if msg.tool_calls:
-
-
-    # 取第一个工具调用
-    tool_call = msg.tool_calls[0]
-
-
-    # 获取参数
-    args = json.loads(
-        tool_call.function.arguments
-    )
-
-
-    print("\n模型选择工具:")
-    print(tool_call.function.name)
-
-
-    print("\n模型传入参数:")
-    print(args)
-
-
-    # 根据工具名称执行对应函数
-
-    if tool_call.function.name == "get_weather":
-
-        result = get_weather(
-            args["city"]
-        )
-
-
-    elif tool_call.function.name == "get_stock_price":
-
-        result = get_stock_price(
-            args["company"]
-        )
-
-
-    elif tool_call.function.name == "calculate_bmi":
-
-        result = calculate_bmi(
-            args["weight"],
-            args["height"]
-        )
-
-
-    elif tool_call.function.name == "search_recipe":
-
-        result = search_recipe(
-            args["food"]
-        )
-
-
-    else:
-
-        result = "未知工具"
-
-
-    print("\n工具返回:")
-    print(result)
-
-
-
-    # 把工具调用加入消息历史
-    messages.append(msg)
-
-
-    # 把工具结果返回给模型
-    messages.append(
+def run_agent(user_input):
+    messages=[
         {
-            "role": "tool",
-            "tool_call_id": tool_call.id,
-            "content": result
+            "role":"user",
+            "content":user_input
         }
-    )
+    ]
+    max_steps = 10
 
+    for step in range(max_steps):
+        #请求模型
+        response=client.chat.completions.create(
+            model="deepseek-v4-flash",
+            messages=messages,
+            tools=tools
+        )
+        msg=response.choices[0].message
 
-    # 第二次调用大模型
-    response = client.chat.completions.create(
-        model="deepseek-chat",
-        messages=messages,
-        tools=tools
-    )
+        #如果模型不再需要工具，说明任务完成
+        if not msg.tool_calls:
+            print("\nAgent: ")
+            print(msg.content)
 
+            break
+        #保存模型要求调用的所有工具
+        messages.append(msg)
 
-    final_message = response.choices[0].message
+        for tool_call in msg.tool_calls:
+            tool_name = tool_call.function.name
+            args=json.loads(
+                tool_call.function.arguments
+            )
+            print("\n模型调用工具： ")
+            print(tool_name)
 
+            print("\n参数：")
+            print(args)
 
-    print("\n最终回答:")
-    print(final_message.content)
+            #查找工具
+            tool_function = tool_map.get(tool_name)
 
+            if tool_function is None:
+                result ="未知工具"
+            else:
+                result = tool_function(**args)
+            print("\n工具结果：")
+            print (result)
 
-else:
+            #把结果反馈给模型
+            messages.append({
+                "role":"tool",
+                "tool_call_id":tool_call.id,
+                "content":str(result)
+            })
+user_input = input("你：")
 
-    print("\n模型直接回答:")
-    print(msg.content)
+run_agent(user_input)
